@@ -2,6 +2,14 @@
 
 In this game, users tap charity: water’s signature yellow jerry cans as fast as they can to earn points. You’ll be working from a partially built version of the game. Some functionality is already provided, and your job is to complete the rest.
 
+## Play online
+
+This game is a static website and is configured to deploy to GitHub Pages whenever changes are pushed to `main`. After the first deployment completes, it will be available at:
+
+<https://ibraheem-05.github.io/05-cw-game-water-quest/>
+
+To enable the first deployment, open the repository’s **Settings → Pages** and choose **GitHub Actions** as the build and deployment source. You can also start a deployment from the **Actions** tab using the “Deploy Water Quest to GitHub Pages” workflow.
+
 ## What’s Already Done
 
 The starter files already include:
@@ -44,4 +52,3 @@ Here’s what you're required to implement to bring the game to life:
 These are the minimum requirements, but if you'd like an additional challenge go ahead and give the LevelUps a shot! For example, you could add logic to decrease the user's score if they miss a jerry can. Have fun and make the game your own!
 
 If you have any questions or need any assistance with your code, reach out to the HelpHub or attend a Drop-In Hour. You got this!!
-

@@ -2,22 +2,29 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Water Quest</title>
   <link href="style.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
   <div class="container">
-    <h1>Water Quest</h1>
-    <p class="game-instructions">Collect 20 items to complete the game!</p>
-    <div class="stats">
-      <p>Cans Collected: <span id="current-cans">0</span></p>
-      <p>Time Left: <span id="timer">30</span>s</p>
+    <header class="game-header">
+      <img class="brand-logo" src="img/cw_logo_horizontal.png" alt="charity: water">
+      <h1>Water Quest</h1>
+    </header>
+    <p class="game-instructions">Tap water cans to score and avoid the randomly appearing fire. Reach 20 points in 30 seconds!</p>
+    <div class="stats" aria-label="Game stats">
+      <p>Score <span id="current-cans" aria-live="polite">0</span></p>
+      <p>Time left <span id="timer" aria-live="off">30</span>s</p>
     </div>
-    <div id="achievements" class="achievement"></div>
-    <div class="game-grid"></div>
-    <button id="start-game">Start Game</button>
+    <div id="achievements" class="achievement" aria-live="polite">Ready when you are!</div>
+    <div class="game-grid" aria-label="Water can game board"></div>
+    <div class="game-controls">
+      <button id="start-game">Start Game</button>
+      <button id="reset-game" type="button">Reset</button>
+    </div>
   </div>
+  <div id="confetti" class="confetti" aria-hidden="true"></div>
   <script src="script.js"></script>
 </body>
 </html>
