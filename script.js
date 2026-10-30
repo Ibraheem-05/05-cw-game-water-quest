@@ -16,6 +16,11 @@ const LOSE_MESSAGES = [
   'So close! Every can counts - give it another try.',
   'Keep going! You can reach the goal next time.'
 ];
+const MILESTONE_MESSAGES = [
+  { fraction: 0.25, message: 'Quarter way there!' },
+  { fraction: 0.5, message: 'Halfway there!' },
+  { fraction: 1, message: 'Goal reached!' }
+];
 
 let currentCans = 0;
 let timeLeft = DIFFICULTIES.normal.duration;
@@ -37,6 +42,25 @@ const messageDisplay = document.getElementById('achievements');
 const startButton = document.getElementById('start-game');
 const resetButton = document.getElementById('reset-game');
 const confettiContainer = document.getElementById('confetti');
+const sounds = {
+  collect: new Audio('sounds/collect.mp3'),
+  miss: new Audio('sounds/miss.mp3'),
+  click: new Audio('sounds/click.mp3'),
+  win: new Audio('sounds/win.mp3')
+};
+
+Object.values(sounds).forEach(sound => {
+  sound.preload = 'auto';
+  sound.volume = 0.5;
+});
+
+function playSound(name) {
+  const sound = sounds[name];
+  if (!sound) return;
+  const playback = sound.cloneNode();
+  playback.volume = sound.volume;
+  playback.play().catch(() => {});
+}
 
 function createGrid() {
   grid.innerHTML = '';
@@ -64,6 +88,19 @@ function renderMilestones() {
   });
 }
 
+function getMilestoneMessage(previousScore, newScore) {
+  const goal = DIFFICULTIES[selectedDifficulty].goal;
+
+  for (const milestone of MILESTONE_MESSAGES) {
+    const threshold = Math.ceil(goal * milestone.fraction);
+    if (previousScore < threshold && newScore >= threshold) {
+      return milestone.message;
+    }
+  }
+
+  return null;
+}
+
 renderMilestones();
 
 function showCatchFeedback(cell, hitFire) {
@@ -75,12 +112,14 @@ function showCatchFeedback(cell, hitFire) {
   setTimeout(() => feedback.remove(), 700);
 }
 
-function spawnWaterCan() {
+function spawnWaterCan(suppressMiss = false) {
   if (!gameActive) return;
   const cells = [...grid.querySelectorAll('.grid-cell')];
+  const missedWaterCan = grid.querySelector('.water-can');
   cells.forEach(cell => {
     cell.querySelectorAll('.water-can, .fire-hazard').forEach(item => item.remove());
   });
+  if (missedWaterCan && !suppressMiss) playSound('miss');
   const availableCells = cells.filter(cell => cell !== lastSpawnCell);
   const randomCell = availableCells[Math.floor(Math.random() * availableCells.length)] || cells[0];
   lastSpawnCell = randomCell;
@@ -144,6 +183,7 @@ function endGame() {
     .replace('{goal}', goal);
   messageDisplay.classList.toggle('game-won', gameWon);
   if (gameWon) celebrateWin();
+  if (gameWon) playSound('win');
   startButton.disabled = false;
   difficultySelect.disabled = false;
   startButton.textContent = 'Play Again';
@@ -208,7 +248,10 @@ grid.addEventListener('click', event => {
   if (!gameActive || !target) return;
 
   const hitFire = target.classList.contains('fire-hazard');
+  playSound(hitFire ? 'miss' : 'collect');
+  const previousScore = currentCans;
   currentCans = hitFire ? Math.max(0, currentCans - 1) : currentCans + 1;
+  const milestoneMessage = hitFire ? null : getMilestoneMessage(previousScore, currentCans);
   currentStreak = hitFire ? 0 : currentStreak + 1;
   if (hitFire) milestonesDisplay.classList.remove('streak-hot');
   scoreDisplay.textContent = currentCans;
@@ -218,10 +261,12 @@ grid.addEventListener('click', event => {
   requestAnimationFrame(() => scoreDisplay.classList.add('score-pop'));
   const cell = target.closest('.grid-cell');
   cell.classList.add(hitFire ? 'hit-fire' : 'collected');
-  spawnWaterCan();
+  spawnWaterCan(true);
   showCatchFeedback(cell, hitFire);
   messageDisplay.textContent = hitFire
     ? 'Fire! You lost one point. Watch out!'
+    : milestoneMessage
+      ? milestoneMessage
     : currentStreak >= 3
       ? `${currentStreak} catch streak! Keep going!`
       : 'Nice catch! +1 point.';
@@ -230,10 +275,17 @@ grid.addEventListener('click', event => {
   }, 250);
 });
 
-startButton.addEventListener('click', startGame);
-resetButton.addEventListener('click', resetGame);
+startButton.addEventListener('click', () => {
+  playSound('click');
+  startGame();
+});
+resetButton.addEventListener('click', () => {
+  playSound('click');
+  resetGame();
+});
 difficultySelect.addEventListener('change', () => {
   if (gameActive) return;
+  playSound('click');
   selectedDifficulty = difficultySelect.value;
   resetGame();
   messageDisplay.textContent = `${difficultySelect.options[difficultySelect.selectedIndex].text} mode selected.`;
