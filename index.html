@@ -4,6 +4,9 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Water Quest</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
   <link href="style.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -12,11 +15,21 @@
       <img class="brand-logo" src="img/cw_logo_horizontal.png" alt="charity: water">
       <h1>Water Quest</h1>
     </header>
-    <p class="game-instructions">Tap water cans to score and avoid the randomly appearing fire. Reach 20 points in 30 seconds!</p>
+    <p class="game-instructions" id="game-instructions">Tap water cans to score and avoid the randomly appearing fire. Reach 20 points in 30 seconds!</p>
+    <div class="difficulty-picker">
+      <label for="difficulty">Difficulty</label>
+      <select id="difficulty">
+        <option value="easy">Easy</option>
+        <option value="normal" selected>Normal</option>
+        <option value="hard">Hard</option>
+      </select>
+    </div>
     <div class="stats" aria-label="Game stats">
       <p>Score <span id="current-cans" aria-live="polite">0</span></p>
+      <p>Goal <span id="goal-cans">20</span></p>
       <p>Time left <span id="timer" aria-live="off">30</span>s</p>
     </div>
+    <div id="milestones" class="milestones" aria-label="Goal progress"></div>
     <div id="achievements" class="achievement" aria-live="polite">Ready when you are!</div>
     <div class="game-grid" aria-label="Water can game board"></div>
     <div class="game-controls">
@@ -24,6 +37,13 @@
       <button id="reset-game" type="button">Reset</button>
     </div>
   </div>
+  <footer class="site-footer">
+    <p>Help bring clean and safe water to communities around the world.</p>
+    <nav aria-label="charity: water links">
+      <a href="https://www.charitywater.org/" target="_blank" rel="noopener noreferrer">Visit charity: water</a>
+      <a href="https://www.charitywater.org/donate" target="_blank" rel="noopener noreferrer">Donate</a>
+    </nav>
+  </footer>
   <div id="confetti" class="confetti" aria-hidden="true"></div>
   <script src="script.js"></script>
 </body>
